@@ -65,9 +65,10 @@ osThreadId Washing1Handle, Washing2Handle, Washing3Handle, Washing4Handle;
 osThreadId Drying1Handle, Drying2Handle, Drying3Handle, Drying4Handle;
 osSemaphoreId SemHandle;
 osMessageQId pushNumber;
+volatile xSemaphoreHandle xMutex;
 //int flag=1;
-int buttonPush;
-int status;
+volatile unsigned char buttonPush;
+volatile unsigned char status;
 /* USER CODE END PV */
 
 /* Private function prototypes -----------------------------------------------*/
@@ -141,6 +142,7 @@ int main(void)
 
   /* USER CODE BEGIN RTOS_MUTEX */
   /* add mutexes, ... */
+  xMutex = xSemaphoreCreateMutex();
   /* USER CODE END RTOS_MUTEX */
 
   /* USER CODE BEGIN RTOS_SEMAPHORES */
@@ -486,7 +488,9 @@ void Foam1(void const * argument)
 		//if(osSemaphoreWait(SemHandle , 10) == osOK)
 	   // {
 		HAL_NVIC_DisableIRQ(EXTI0_IRQn);
+		xSemaphoreTake(xMutex, portMAX_DELAY);
 		HAL_UART_Transmit(&huart2,(uint8_t*)str1,strlen(str1),strlen(str1)+1);
+		xSemaphoreGive(xMutex);
 		HAL_NVIC_EnableIRQ(EXTI0_IRQn);
 		//}
 	   // osSemaphoreRelease(SemHandle);
@@ -506,8 +510,10 @@ void Foam2(void const * argument)
 		//if(osSemaphoreWait(SemHandle , 10) == osOK)
 	   // {
 		HAL_NVIC_DisableIRQ(EXTI0_IRQn);
-		HAL_UART_Transmit(&huart2,(uint8_t*)str1,strlen(str1),strlen(str1)+1);
-		HAL_NVIC_EnableIRQ(EXTI0_IRQn);
+				xSemaphoreTake(xMutex, portMAX_DELAY);
+				HAL_UART_Transmit(&huart2,(uint8_t*)str1,strlen(str1),strlen(str1)+1);
+				xSemaphoreGive(xMutex);
+				HAL_NVIC_EnableIRQ(EXTI0_IRQn);
 		//}
 	   //osSemaphoreRelease(SemHandle);
 		osThreadDef(brushes2, Brushes2, osPriorityNormal, 0, 128);
@@ -526,8 +532,10 @@ void Foam3(void const * argument)
 		//if(osSemaphoreWait(SemHandle , 10) == osOK)
 	   // {
 		HAL_NVIC_DisableIRQ(EXTI0_IRQn);
-		HAL_UART_Transmit(&huart2,(uint8_t*)str1,strlen(str1),strlen(str1)+1);
-		HAL_NVIC_EnableIRQ(EXTI0_IRQn);
+				xSemaphoreTake(xMutex, portMAX_DELAY);
+				HAL_UART_Transmit(&huart2,(uint8_t*)str1,strlen(str1),strlen(str1)+1);
+				xSemaphoreGive(xMutex);
+				HAL_NVIC_EnableIRQ(EXTI0_IRQn);
 		//}
 	    //osSemaphoreRelease(SemHandle);
 	    osThreadDef(brushes3, Brushes3, osPriorityNormal, 0, 128);
@@ -546,8 +554,10 @@ void Foam4(void const * argument)
 		//if(osSemaphoreWait(SemHandle , 10) == osOK)
 	   // {
 		HAL_NVIC_DisableIRQ(EXTI0_IRQn);
-		HAL_UART_Transmit(&huart2,(uint8_t*)str1,strlen(str1),strlen(str1)+1);
-		HAL_NVIC_EnableIRQ(EXTI0_IRQn);
+				xSemaphoreTake(xMutex, portMAX_DELAY);
+				HAL_UART_Transmit(&huart2,(uint8_t*)str1,strlen(str1),strlen(str1)+1);
+				xSemaphoreGive(xMutex);
+				HAL_NVIC_EnableIRQ(EXTI0_IRQn);
 		//}
 		//osSemaphoreRelease(SemHandle);
 	    osThreadDef(brushes4, Brushes4, osPriorityNormal, 0, 128);
@@ -566,8 +576,10 @@ void Brushes1(void const * argument)
 		//if(osSemaphoreWait(SemHandle , 10) == osOK)
 		//{
 		HAL_NVIC_DisableIRQ(EXTI0_IRQn);
-		HAL_UART_Transmit(&huart2,(uint8_t*)str1,strlen(str1),strlen(str1)+1);
-		HAL_NVIC_EnableIRQ(EXTI0_IRQn);
+				xSemaphoreTake(xMutex, portMAX_DELAY);
+				HAL_UART_Transmit(&huart2,(uint8_t*)str1,strlen(str1),strlen(str1)+1);
+				xSemaphoreGive(xMutex);
+				HAL_NVIC_EnableIRQ(EXTI0_IRQn);
 		//}
 		//osSemaphoreRelease(SemHandle);
 		osThreadDef(washing1, Washing1, osPriorityNormal, 0, 128);
@@ -586,8 +598,10 @@ void Brushes2(void const * argument)
 		//if(osSemaphoreWait(SemHandle , 10) == osOK)
 		//{
 		HAL_NVIC_DisableIRQ(EXTI0_IRQn);
-		HAL_UART_Transmit(&huart2,(uint8_t*)str1,strlen(str1),strlen(str1)+1);
-		HAL_NVIC_EnableIRQ(EXTI0_IRQn);
+				xSemaphoreTake(xMutex, portMAX_DELAY);
+				HAL_UART_Transmit(&huart2,(uint8_t*)str1,strlen(str1),strlen(str1)+1);
+				xSemaphoreGive(xMutex);
+				HAL_NVIC_EnableIRQ(EXTI0_IRQn);
 		//}
 		//osSemaphoreRelease(SemHandle);
 		osThreadDef(washing2, Washing2, osPriorityNormal, 0, 128);
@@ -607,8 +621,10 @@ void Brushes3(void const * argument)
 		//if(osSemaphoreWait(SemHandle , 10) == osOK)
 		//{
 		HAL_NVIC_DisableIRQ(EXTI0_IRQn);
-		HAL_UART_Transmit(&huart2,(uint8_t*)str1,strlen(str1),strlen(str1)+1);
-		HAL_NVIC_EnableIRQ(EXTI0_IRQn);
+				xSemaphoreTake(xMutex, portMAX_DELAY);
+				HAL_UART_Transmit(&huart2,(uint8_t*)str1,strlen(str1),strlen(str1)+1);
+				xSemaphoreGive(xMutex);
+				HAL_NVIC_EnableIRQ(EXTI0_IRQn);
 		//}
 		//osSemaphoreRelease(SemHandle);
 		osThreadDef(washing3, Washing3, osPriorityNormal, 0, 128);
@@ -628,8 +644,10 @@ void Brushes4(void const * argument)
 		//if(osSemaphoreWait(SemHandle , 10) == osOK)
 		//{
 		HAL_NVIC_DisableIRQ(EXTI0_IRQn);
-		HAL_UART_Transmit(&huart2,(uint8_t*)str1,strlen(str1),strlen(str1)+1);
-		HAL_NVIC_EnableIRQ(EXTI0_IRQn);
+				xSemaphoreTake(xMutex, portMAX_DELAY);
+				HAL_UART_Transmit(&huart2,(uint8_t*)str1,strlen(str1),strlen(str1)+1);
+				xSemaphoreGive(xMutex);
+				HAL_NVIC_EnableIRQ(EXTI0_IRQn);
 		//}
 		osSemaphoreRelease(SemHandle);
 		osThreadDef(washing4, Washing4, osPriorityNormal, 0, 128);
@@ -649,8 +667,10 @@ void Washing1(void const * argument)
 		//if(osSemaphoreWait(SemHandle , 10) == osOK)
 		//{
 		HAL_NVIC_DisableIRQ(EXTI0_IRQn);
-		HAL_UART_Transmit(&huart2,(uint8_t*)str1,strlen(str1),strlen(str1)+1);
-		HAL_NVIC_EnableIRQ(EXTI0_IRQn);
+				xSemaphoreTake(xMutex, portMAX_DELAY);
+				HAL_UART_Transmit(&huart2,(uint8_t*)str1,strlen(str1),strlen(str1)+1);
+				xSemaphoreGive(xMutex);
+				HAL_NVIC_EnableIRQ(EXTI0_IRQn);
 		//}
 		//osSemaphoreRelease(SemHandle);
 		osThreadDef(drying1, Drying1, osPriorityNormal, 0, 128);
@@ -669,8 +689,10 @@ void Washing2(void const * argument)
 		//if(osSemaphoreWait(SemHandle , 10) == osOK)
 		//{
 		HAL_NVIC_DisableIRQ(EXTI0_IRQn);
-		HAL_UART_Transmit(&huart2,(uint8_t*)str1,strlen(str1),strlen(str1)+1);
-		HAL_NVIC_EnableIRQ(EXTI0_IRQn);
+				xSemaphoreTake(xMutex, portMAX_DELAY);
+				HAL_UART_Transmit(&huart2,(uint8_t*)str1,strlen(str1),strlen(str1)+1);
+				xSemaphoreGive(xMutex);
+				HAL_NVIC_EnableIRQ(EXTI0_IRQn);
 		//}
 		//osSemaphoreRelease(SemHandle);
 		osThreadDef(drying2, Drying2, osPriorityNormal, 0, 128);
@@ -689,8 +711,10 @@ void Washing3(void const * argument)
 		//if(osSemaphoreWait(SemHandle , 10) == osOK)
 		//{
 		HAL_NVIC_DisableIRQ(EXTI0_IRQn);
-		HAL_UART_Transmit(&huart2,(uint8_t*)str1,strlen(str1),strlen(str1)+1);
-	    HAL_NVIC_EnableIRQ(EXTI0_IRQn);
+				xSemaphoreTake(xMutex, portMAX_DELAY);
+				HAL_UART_Transmit(&huart2,(uint8_t*)str1,strlen(str1),strlen(str1)+1);
+				xSemaphoreGive(xMutex);
+				HAL_NVIC_EnableIRQ(EXTI0_IRQn);
 		//}
 		//osSemaphoreRelease(SemHandle);
 		osThreadDef(drying3, Drying3, osPriorityNormal, 0, 128);
@@ -709,8 +733,10 @@ void Washing4(void const * argument)
 		//if(osSemaphoreWait(SemHandle , 10) == osOK)
 		//{
 		HAL_NVIC_DisableIRQ(EXTI0_IRQn);
-		HAL_UART_Transmit(&huart2,(uint8_t*)str1,strlen(str1),strlen(str1)+1);
-	    HAL_NVIC_EnableIRQ(EXTI0_IRQn);
+				xSemaphoreTake(xMutex, portMAX_DELAY);
+				HAL_UART_Transmit(&huart2,(uint8_t*)str1,strlen(str1),strlen(str1)+1);
+				xSemaphoreGive(xMutex);
+				HAL_NVIC_EnableIRQ(EXTI0_IRQn);
 		//}
 		//osSemaphoreRelease(SemHandle);
 		osThreadDef(drying4, Drying4, osPriorityNormal, 0, 128);
@@ -729,8 +755,10 @@ void Drying1(void const * argument)
 		//if(osSemaphoreWait(SemHandle , 10) == osOK)
 		//{
 		HAL_NVIC_DisableIRQ(EXTI0_IRQn);
-		HAL_UART_Transmit(&huart2,(uint8_t*)str1,strlen(str1),strlen(str1)+1);
-		HAL_NVIC_EnableIRQ(EXTI0_IRQn);
+				xSemaphoreTake(xMutex, portMAX_DELAY);
+				HAL_UART_Transmit(&huart2,(uint8_t*)str1,strlen(str1),strlen(str1)+1);
+				xSemaphoreGive(xMutex);
+				HAL_NVIC_EnableIRQ(EXTI0_IRQn);
 		//}
 		//osSemaphoreRelease(SemHandle);
 		osThreadTerminate(NULL);
@@ -747,8 +775,10 @@ void Drying2(void const * argument)
 		//if(osSemaphoreWait(SemHandle , 10) == osOK)
 		//{
 		HAL_NVIC_DisableIRQ(EXTI0_IRQn);
-		HAL_UART_Transmit(&huart2,(uint8_t*)str1,strlen(str1),strlen(str1)+1);
-	    HAL_NVIC_EnableIRQ(EXTI0_IRQn);
+				xSemaphoreTake(xMutex, portMAX_DELAY);
+				HAL_UART_Transmit(&huart2,(uint8_t*)str1,strlen(str1),strlen(str1)+1);
+				xSemaphoreGive(xMutex);
+				HAL_NVIC_EnableIRQ(EXTI0_IRQn);
 		//}
 		//osSemaphoreRelease(SemHandle);
 		osThreadTerminate(NULL);
@@ -765,8 +795,10 @@ void Drying3(void const * argument)
 		//if(osSemaphoreWait(SemHandle , 10) == osOK)
 		//{
 		HAL_NVIC_DisableIRQ(EXTI0_IRQn);
-		HAL_UART_Transmit(&huart2,(uint8_t*)str1,strlen(str1),strlen(str1)+1);
-		HAL_NVIC_EnableIRQ(EXTI0_IRQn);
+				xSemaphoreTake(xMutex, portMAX_DELAY);
+				HAL_UART_Transmit(&huart2,(uint8_t*)str1,strlen(str1),strlen(str1)+1);
+				xSemaphoreGive(xMutex);
+				HAL_NVIC_EnableIRQ(EXTI0_IRQn);
 		//}
 		//osSemaphoreRelease(SemHandle);
 		osThreadTerminate(NULL);
@@ -783,8 +815,10 @@ void Drying4(void const * argument)
 		//if(osSemaphoreWait(SemHandle , 10) == osOK)
 		//{
 		HAL_NVIC_DisableIRQ(EXTI0_IRQn);
-		HAL_UART_Transmit(&huart2,(uint8_t*)str1,strlen(str1),strlen(str1)+1);
-		HAL_NVIC_EnableIRQ(EXTI0_IRQn);
+				xSemaphoreTake(xMutex, portMAX_DELAY);
+				HAL_UART_Transmit(&huart2,(uint8_t*)str1,strlen(str1),strlen(str1)+1);
+				xSemaphoreGive(xMutex);
+				HAL_NVIC_EnableIRQ(EXTI0_IRQn);
 		//}
 		//osSemaphoreRelease(SemHandle);
 		osThreadTerminate(NULL);
