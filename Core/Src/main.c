@@ -798,7 +798,6 @@ void StartDefaultTask(void const * argument)
 			  	  case 1: ;
 			  	  	  osThreadDef(foam1, Foam1, osPriorityNormal, 0, 256);
 			  	  	  Foam1Handle = osThreadCreate(osThread(foam1), NULL);
-			  	  	  HAL_NVIC_EnableIRQ(EXTI0_IRQn);
 			  	  	  break;
 			  	  case 2: ;
 			  	  	  osThreadDef(foam2, Foam2, osPriorityNormal, 0, 256);
@@ -815,6 +814,7 @@ void StartDefaultTask(void const * argument)
 			  	  default: ;
 			  	  	  break;
 			 	}
+			  HAL_NVIC_EnableIRQ(EXTI0_IRQn);
 		  }
 		  osDelay(1);
 		}
