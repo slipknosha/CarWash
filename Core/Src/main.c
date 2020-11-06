@@ -477,15 +477,23 @@ void Foam1(void const * argument)
 	uint32_t tickcount = osKernelSysTick();
 	for(;;)
 	{
-		sprintf(str1, "Foam applied to the first car, it took 30 sec\r\n");
+
 		osDelayUntil(&tickcount, 30000);
 		HAL_NVIC_DisableIRQ(EXTI0_IRQn);
-		xSemaphoreTake(xMutex, portMAX_DELAY);
-		HAL_UART_Transmit(&huart2,(uint8_t*)str1,strlen(str1),strlen(str1)+1);
-		xSemaphoreGive(xMutex);
-		HAL_NVIC_EnableIRQ(EXTI0_IRQn);
+		//xSemaphoreTake(xMutex, portMAX_DELAY);
+		taskENTER_CRITICAL();
+		{
+			sprintf(str1, "Foam applied to the first car, it took 30 sec\r\n");
+			HAL_UART_Transmit(&huart2,(uint8_t*)str1,strlen(str1),strlen(str1)+1);
+
+
+		//xSemaphoreGive(xMutex);
+
 		osThreadDef(brushes1, Brushes1, osPriorityNormal, 0, 256);
 		Brushes1Handle = osThreadCreate(osThread(brushes1), NULL);
+		HAL_NVIC_EnableIRQ(EXTI0_IRQn);
+		}
+		taskEXIT_CRITICAL();
 		osThreadTerminate(NULL);
 	}
 }
@@ -495,15 +503,23 @@ void Foam2(void const * argument)
 	uint32_t tickcount = osKernelSysTick();
 	for(;;)
 	{
-		sprintf(str1, "Foam applied to the second car, it took 30 sec\r\n");
+
 		osDelayUntil(&tickcount, 30000);
 		HAL_NVIC_DisableIRQ(EXTI0_IRQn);
-		xSemaphoreTake(xMutex, portMAX_DELAY);
-		HAL_UART_Transmit(&huart2,(uint8_t*)str1,strlen(str1),strlen(str1)+1);
-		xSemaphoreGive(xMutex);
+		//xSemaphoreTake(xMutex, portMAX_DELAY);
+				taskENTER_CRITICAL();
+				{
+					sprintf(str1, "Foam applied to the second car, it took 30 sec\r\n");
+					HAL_UART_Transmit(&huart2,(uint8_t*)str1,strlen(str1),strlen(str1)+1);
+
+
+				//xSemaphoreGive(xMutex);
 		HAL_NVIC_EnableIRQ(EXTI0_IRQn);
 		osThreadDef(brushes2, Brushes2, osPriorityNormal, 0, 256);
 		Brushes2Handle = osThreadCreate(osThread(brushes2), NULL);
+		HAL_NVIC_EnableIRQ(EXTI0_IRQn);
+		}
+		taskEXIT_CRITICAL();
 		osThreadTerminate(NULL);
 	}
 }
@@ -513,15 +529,22 @@ void Foam3(void const * argument)
 	uint32_t tickcount = osKernelSysTick();
 	for(;;)
 	{
-		sprintf(str1, "Foam applied to the third car, it took 30 sec\r\n");
+
 		osDelayUntil(&tickcount, 30000);
 		HAL_NVIC_DisableIRQ(EXTI0_IRQn);
-		xSemaphoreTake(xMutex, portMAX_DELAY);
-		HAL_UART_Transmit(&huart2,(uint8_t*)str1,strlen(str1),strlen(str1)+1);
-		xSemaphoreGive(xMutex);
-		HAL_NVIC_EnableIRQ(EXTI0_IRQn);
+		//xSemaphoreTake(xMutex, portMAX_DELAY);
+				taskENTER_CRITICAL();
+				{
+					sprintf(str1, "Foam applied to the third car, it took 30 sec\r\n");
+					HAL_UART_Transmit(&huart2,(uint8_t*)str1,strlen(str1),strlen(str1)+1);
+
+				//xSemaphoreGive(xMutex);
+
 	    osThreadDef(brushes3, Brushes3, osPriorityNormal, 0, 256);
 	    Brushes3Handle = osThreadCreate(osThread(brushes3), NULL);
+	    HAL_NVIC_EnableIRQ(EXTI0_IRQn);
+				}
+								taskEXIT_CRITICAL();
 	    osThreadTerminate(NULL);
 	}
 }
@@ -531,15 +554,22 @@ void Foam4(void const * argument)
 	uint32_t tickcount = osKernelSysTick();
 	for(;;)
 	{
-		sprintf(str1, "Foam applied to the fourth car, it took 30 sec\r\n");
+
 		osDelayUntil(&tickcount, 30000);
 		HAL_NVIC_DisableIRQ(EXTI0_IRQn);
-		xSemaphoreTake(xMutex, portMAX_DELAY);
-		HAL_UART_Transmit(&huart2,(uint8_t*)str1,strlen(str1),strlen(str1)+1);
-		xSemaphoreGive(xMutex);
-		HAL_NVIC_EnableIRQ(EXTI0_IRQn);
+		//xSemaphoreTake(xMutex, portMAX_DELAY);
+				taskENTER_CRITICAL();
+				{
+					sprintf(str1, "Foam applied to the fourth car, it took 30 sec\r\n");
+					HAL_UART_Transmit(&huart2,(uint8_t*)str1,strlen(str1),strlen(str1)+1);
+
+				//xSemaphoreGive(xMutex);
+
 	    osThreadDef(brushes4, Brushes4, osPriorityNormal, 0, 256);
 	    Brushes4Handle = osThreadCreate(osThread(brushes4), NULL);
+	    HAL_NVIC_EnableIRQ(EXTI0_IRQn);
+				}
+								taskEXIT_CRITICAL();
 	    osThreadTerminate(NULL);
 	}
 }
@@ -549,15 +579,22 @@ void Brushes1(void const * argument)
 	uint32_t tickcount = osKernelSysTick();
 	for(;;)
 	{
-		sprintf(str1, "Brushing the first car is completed it took 30 sec\r\n");
+
 		osDelayUntil(&tickcount, 30000);
 		HAL_NVIC_DisableIRQ(EXTI0_IRQn);
-		xSemaphoreTake(xMutex, portMAX_DELAY);
-		HAL_UART_Transmit(&huart2,(uint8_t*)str1,strlen(str1),strlen(str1)+1);
-		xSemaphoreGive(xMutex);
-		HAL_NVIC_EnableIRQ(EXTI0_IRQn);
+		//xSemaphoreTake(xMutex, portMAX_DELAY);
+				taskENTER_CRITICAL();
+				{
+					sprintf(str1, "Brushing the first car is completed it took 30 sec\r\n");
+					HAL_UART_Transmit(&huart2,(uint8_t*)str1,strlen(str1),strlen(str1)+1);
+
+				//xSemaphoreGive(xMutex);
+
 		osThreadDef(washing1, Washing1, osPriorityNormal, 0, 256);
 		Washing1Handle = osThreadCreate(osThread(washing1), NULL);
+		HAL_NVIC_EnableIRQ(EXTI0_IRQn);
+				}
+								taskEXIT_CRITICAL();
 		osThreadTerminate(NULL);
 	}
 }
@@ -567,15 +604,22 @@ void Brushes2(void const * argument)
 	uint32_t tickcount = osKernelSysTick();
 	for(;;)
 	{
-		sprintf(str1, "Brushing the second car is completed it took 30 sec\r\n");
+
 		osDelayUntil(&tickcount, 30000);
 		HAL_NVIC_DisableIRQ(EXTI0_IRQn);
-		xSemaphoreTake(xMutex, portMAX_DELAY);
-		HAL_UART_Transmit(&huart2,(uint8_t*)str1,strlen(str1),strlen(str1)+1);
-		xSemaphoreGive(xMutex);
-		HAL_NVIC_EnableIRQ(EXTI0_IRQn);
+		//xSemaphoreTake(xMutex, portMAX_DELAY);
+				taskENTER_CRITICAL();
+				{
+					sprintf(str1, "Brushing the second car is completed it took 30 sec\r\n");
+					HAL_UART_Transmit(&huart2,(uint8_t*)str1,strlen(str1),strlen(str1)+1);
+
+				//xSemaphoreGive(xMutex);
+
 		osThreadDef(washing2, Washing2, osPriorityNormal, 0, 256);
 		Washing2Handle = osThreadCreate(osThread(washing2), NULL);
+		HAL_NVIC_EnableIRQ(EXTI0_IRQn);
+				}
+								taskEXIT_CRITICAL();
 		osThreadTerminate(NULL);
 	}
 }
@@ -586,15 +630,22 @@ void Brushes3(void const * argument)
 	uint32_t tickcount = osKernelSysTick();
 	for(;;)
 	{
-		sprintf(str1, "Brushing the third car is completed it took 30 sec\r\n");
+
 		osDelayUntil(&tickcount, 30000);
 		HAL_NVIC_DisableIRQ(EXTI0_IRQn);
-		xSemaphoreTake(xMutex, portMAX_DELAY);
-		HAL_UART_Transmit(&huart2,(uint8_t*)str1,strlen(str1),strlen(str1)+1);
-		xSemaphoreGive(xMutex);
-		HAL_NVIC_EnableIRQ(EXTI0_IRQn);
+		//xSemaphoreTake(xMutex, portMAX_DELAY);
+				taskENTER_CRITICAL();
+				{
+					sprintf(str1, "Brushing the third car is completed it took 30 sec\r\n");
+					HAL_UART_Transmit(&huart2,(uint8_t*)str1,strlen(str1),strlen(str1)+1);
+
+				//xSemaphoreGive(xMutex);
+
 		osThreadDef(washing3, Washing3, osPriorityNormal, 0, 256);
 		Washing3Handle = osThreadCreate(osThread(washing3), NULL);
+		HAL_NVIC_EnableIRQ(EXTI0_IRQn);
+				}
+								taskEXIT_CRITICAL();
 		osThreadTerminate(NULL);
 	}
 }
@@ -605,16 +656,23 @@ void Brushes4(void const * argument)
 	uint32_t tickcount = osKernelSysTick();
 	for(;;)
 	{
-		sprintf(str1, "Brushing the forth car is completed it took 30 sec\r\n");
+
 		osDelayUntil(&tickcount, 30000);
 		HAL_NVIC_DisableIRQ(EXTI0_IRQn);
-		xSemaphoreTake(xMutex, portMAX_DELAY);
-		HAL_UART_Transmit(&huart2,(uint8_t*)str1,strlen(str1),strlen(str1)+1);
-		xSemaphoreGive(xMutex);
-		HAL_NVIC_EnableIRQ(EXTI0_IRQn);
-		osSemaphoreRelease(SemHandle);
+		//xSemaphoreTake(xMutex, portMAX_DELAY);
+				taskENTER_CRITICAL();
+				{
+					sprintf(str1, "Brushing the forth car is completed it took 30 sec\r\n");
+					HAL_UART_Transmit(&huart2,(uint8_t*)str1,strlen(str1),strlen(str1)+1);
+
+				//xSemaphoreGive(xMutex);
+
+		//osSemaphoreRelease(SemHandle);
 		osThreadDef(washing4, Washing4, osPriorityNormal, 0, 256);
 		Washing4Handle = osThreadCreate(osThread(washing4), NULL);
+		HAL_NVIC_EnableIRQ(EXTI0_IRQn);
+				}
+								taskEXIT_CRITICAL();
 		osThreadTerminate(NULL);
 	}
 }
@@ -625,15 +683,22 @@ void Washing1(void const * argument)
 	uint32_t tickcount = osKernelSysTick();
 	for(;;)
 	{
-		sprintf(str1, "Washing the first car is completed it took 60 sec\r\n");
+
 		osDelayUntil(&tickcount, 60000);
 		HAL_NVIC_DisableIRQ(EXTI0_IRQn);
-		xSemaphoreTake(xMutex, portMAX_DELAY);
-		HAL_UART_Transmit(&huart2,(uint8_t*)str1,strlen(str1),strlen(str1)+1);
-		xSemaphoreGive(xMutex);
-		HAL_NVIC_EnableIRQ(EXTI0_IRQn);
+		//xSemaphoreTake(xMutex, portMAX_DELAY);
+				taskENTER_CRITICAL();
+				{
+					sprintf(str1, "Washing the first car is completed it took 60 sec\r\n");
+					HAL_UART_Transmit(&huart2,(uint8_t*)str1,strlen(str1),strlen(str1)+1);
+
+				//xSemaphoreGive(xMutex);
+
 		osThreadDef(drying1, Drying1, osPriorityNormal, 0, 256);
 		Drying1Handle = osThreadCreate(osThread(drying1), NULL);
+		HAL_NVIC_EnableIRQ(EXTI0_IRQn);
+				}
+								taskEXIT_CRITICAL();
 		osThreadTerminate(NULL);
 	}
 }
@@ -643,15 +708,22 @@ void Washing2(void const * argument)
 	uint32_t tickcount = osKernelSysTick();
 	for(;;)
 	{
-		sprintf(str1, "Washing the second car is completed it took 60 sec\r\n");
+
 		osDelayUntil(&tickcount, 60000);
 		HAL_NVIC_DisableIRQ(EXTI0_IRQn);
-		xSemaphoreTake(xMutex, portMAX_DELAY);
-		HAL_UART_Transmit(&huart2,(uint8_t*)str1,strlen(str1),strlen(str1)+1);
-		xSemaphoreGive(xMutex);
-		HAL_NVIC_EnableIRQ(EXTI0_IRQn);
+		//xSemaphoreTake(xMutex, portMAX_DELAY);
+				taskENTER_CRITICAL();
+				{
+					sprintf(str1, "Washing the second car is completed it took 60 sec\r\n");
+					HAL_UART_Transmit(&huart2,(uint8_t*)str1,strlen(str1),strlen(str1)+1);
+
+				//xSemaphoreGive(xMutex);
+
 		osThreadDef(drying2, Drying2, osPriorityNormal, 0, 256);
 		Drying2Handle = osThreadCreate(osThread(drying2), NULL);
+		HAL_NVIC_EnableIRQ(EXTI0_IRQn);
+				}
+								taskEXIT_CRITICAL();
 		osThreadTerminate(NULL);
 	}
 }
@@ -661,15 +733,22 @@ void Washing3(void const * argument)
 	uint32_t tickcount = osKernelSysTick();
 	for(;;)
 	{
-		sprintf(str1, "Washing the third car is completed it took 60 sec\r\n");
+
 		osDelayUntil(&tickcount, 60000);
 		HAL_NVIC_DisableIRQ(EXTI0_IRQn);
-		xSemaphoreTake(xMutex, portMAX_DELAY);
-		HAL_UART_Transmit(&huart2,(uint8_t*)str1,strlen(str1),strlen(str1)+1);
-		xSemaphoreGive(xMutex);
-		HAL_NVIC_EnableIRQ(EXTI0_IRQn);
+		//xSemaphoreTake(xMutex, portMAX_DELAY);
+				taskENTER_CRITICAL();
+				{
+					sprintf(str1, "Washing the third car is completed it took 60 sec\r\n");
+					HAL_UART_Transmit(&huart2,(uint8_t*)str1,strlen(str1),strlen(str1)+1);
+
+				//xSemaphoreGive(xMutex);
+
 		osThreadDef(drying3, Drying3, osPriorityNormal, 0, 256);
 		Drying3Handle = osThreadCreate(osThread(drying3), NULL);
+		HAL_NVIC_EnableIRQ(EXTI0_IRQn);
+				}
+								taskEXIT_CRITICAL();
 		osThreadTerminate(NULL);
 	}
 }
@@ -679,15 +758,22 @@ void Washing4(void const * argument)
 	uint32_t tickcount = osKernelSysTick();
 	for(;;)
 	{
-		sprintf(str1, "Washing the fourth car is completed it took 60 sec\r\n");
+
 		osDelayUntil(&tickcount, 60000);
 		HAL_NVIC_DisableIRQ(EXTI0_IRQn);
-		xSemaphoreTake(xMutex, portMAX_DELAY);
-		HAL_UART_Transmit(&huart2,(uint8_t*)str1,strlen(str1),strlen(str1)+1);
-		xSemaphoreGive(xMutex);
-		HAL_NVIC_EnableIRQ(EXTI0_IRQn);
+		//xSemaphoreTake(xMutex, portMAX_DELAY);
+				taskENTER_CRITICAL();
+				{
+					sprintf(str1, "Washing the fourth car is completed it took 60 sec\r\n");
+					HAL_UART_Transmit(&huart2,(uint8_t*)str1,strlen(str1),strlen(str1)+1);
+
+				//xSemaphoreGive(xMutex);
+
 		osThreadDef(drying4, Drying4, osPriorityNormal, 0, 256);
 		Drying4Handle = osThreadCreate(osThread(drying4), NULL);
+		HAL_NVIC_EnableIRQ(EXTI0_IRQn);
+				}
+								taskEXIT_CRITICAL();
 		osThreadTerminate(NULL);
 	}
 }
@@ -697,13 +783,20 @@ void Drying1(void const * argument)
 	uint32_t tickcount = osKernelSysTick();
 	for(;;)
 	{
-		sprintf(str1, "Drying the first car is completed it took 30 sec\r\n");
+
 		osDelayUntil(&tickcount, 30000);
 		HAL_NVIC_DisableIRQ(EXTI0_IRQn);
-		xSemaphoreTake(xMutex, portMAX_DELAY);
-		HAL_UART_Transmit(&huart2,(uint8_t*)str1,strlen(str1),strlen(str1)+1);
-		xSemaphoreGive(xMutex);
+		//xSemaphoreTake(xMutex, portMAX_DELAY);
+				taskENTER_CRITICAL();
+				{
+					sprintf(str1, "Drying the first car is completed it took 30 sec\r\n");
+					HAL_UART_Transmit(&huart2,(uint8_t*)str1,strlen(str1),strlen(str1)+1);
+
+				//xSemaphoreGive(xMutex);
+		buttonPush--;
 		HAL_NVIC_EnableIRQ(EXTI0_IRQn);
+				}
+								taskEXIT_CRITICAL();
 		osThreadTerminate(NULL);
 	}
 }
@@ -713,13 +806,20 @@ void Drying2(void const * argument)
 	uint32_t tickcount = osKernelSysTick();
 	for(;;)
 	{
-		sprintf(str1, "Drying the second car is completed it took 30 sec\r\n");
+
 		osDelayUntil(&tickcount, 30000);
 		HAL_NVIC_DisableIRQ(EXTI0_IRQn);
-		xSemaphoreTake(xMutex, portMAX_DELAY);
-		HAL_UART_Transmit(&huart2,(uint8_t*)str1,strlen(str1),strlen(str1)+1);
-		xSemaphoreGive(xMutex);
+		//xSemaphoreTake(xMutex, portMAX_DELAY);
+				taskENTER_CRITICAL();
+				{
+					sprintf(str1, "Drying the second car is completed it took 30 sec\r\n");
+					HAL_UART_Transmit(&huart2,(uint8_t*)str1,strlen(str1),strlen(str1)+1);
+
+				//xSemaphoreGive(xMutex);
+		buttonPush--;
 		HAL_NVIC_EnableIRQ(EXTI0_IRQn);
+				}
+								taskEXIT_CRITICAL();
 		osThreadTerminate(NULL);
 	}
 }
@@ -729,13 +829,20 @@ void Drying3(void const * argument)
 	uint32_t tickcount = osKernelSysTick();
 	for(;;)
 	{
-		sprintf(str1, "Drying the third car is completed it took 30 sec\r\n");
+
 		osDelayUntil(&tickcount, 30000);
 		HAL_NVIC_DisableIRQ(EXTI0_IRQn);
-		xSemaphoreTake(xMutex, portMAX_DELAY);
-		HAL_UART_Transmit(&huart2,(uint8_t*)str1,strlen(str1),strlen(str1)+1);
-		xSemaphoreGive(xMutex);
+		//xSemaphoreTake(xMutex, portMAX_DELAY);
+				taskENTER_CRITICAL();
+				{
+					sprintf(str1, "Drying the third car is completed it took 30 sec\r\n");
+					HAL_UART_Transmit(&huart2,(uint8_t*)str1,strlen(str1),strlen(str1)+1);
+
+				//xSemaphoreGive(xMutex);
+		buttonPush--;
 		HAL_NVIC_EnableIRQ(EXTI0_IRQn);
+				}
+								taskEXIT_CRITICAL();
 		osThreadTerminate(NULL);
 	}
 }
@@ -745,13 +852,19 @@ void Drying4(void const * argument)
 	uint32_t tickcount = osKernelSysTick();
 	for(;;)
 	{
-		sprintf(str1, "Drying the fouth car is completed it took 30 sec\r\n");
+
 		osDelayUntil(&tickcount, 30000);
 		HAL_NVIC_DisableIRQ(EXTI0_IRQn);
-		xSemaphoreTake(xMutex, portMAX_DELAY);
-		HAL_UART_Transmit(&huart2,(uint8_t*)str1,strlen(str1),strlen(str1)+1);
-		xSemaphoreGive(xMutex);
-		HAL_NVIC_EnableIRQ(EXTI0_IRQn);
+		//xSemaphoreTake(xMutex, portMAX_DELAY);
+				taskENTER_CRITICAL();
+				{
+					sprintf(str1, "Drying the fouth car is completed it took 30 sec\r\n");
+					HAL_UART_Transmit(&huart2,(uint8_t*)str1,strlen(str1),strlen(str1)+1);
+
+				//xSemaphoreGive(xMutex);
+		buttonPush--;
+		HAL_NVIC_EnableIRQ(EXTI0_IRQn);}
+				taskEXIT_CRITICAL();
 		osThreadTerminate(NULL);
 	}
 }
@@ -759,17 +872,41 @@ void Drying4(void const * argument)
 void EXTI0_IRQHandler(void)
 {
   /* USER CODE BEGIN EXTI0_IRQn 0 */
-	HAL_NVIC_DisableIRQ(EXTI0_IRQn);
-	  HAL_UART_Transmit(&huart2,"p\r\n",3,5);
-	  if (buttonPush == 4) buttonPush = 0;
-	  buttonPush++;
-	  status = 1;
+
   /* USER CODE END EXTI0_IRQn 0 */
   HAL_GPIO_EXTI_IRQHandler(GPIO_PIN_0);
   /* USER CODE BEGIN EXTI0_IRQn 1 */
 
   /* USER CODE END EXTI0_IRQn 1 */
 }
+
+void HAL_GPIO_EXTI_IRQHandler(uint16_t GPIO_Pin)
+{
+  /* EXTI line interrupt detected */
+  if (__HAL_GPIO_EXTI_GET_IT(GPIO_Pin) != 0x00u)
+  {
+	  HAL_NVIC_DisableIRQ(EXTI0_IRQn);
+	  	  HAL_UART_Transmit(&huart2,"p\r\n",3,5);
+	  	  if (buttonPush == 4) buttonPush = 0;
+	  	  buttonPush++;
+	  	  status = 1;
+    __HAL_GPIO_EXTI_CLEAR_IT(GPIO_Pin); // Clears The Interrupt Flag
+    HAL_GPIO_EXTI_Callback(GPIO_Pin);   // Calls The ISR Handler CallBack Function
+  }
+}
+
+/*void HAL_GPIO_EXTI_Callback(uint16_t GPIO_Pin)
+{
+	//if (GPIO_Pin == GPIO_PIN_0)
+	//{
+		HAL_NVIC_DisableIRQ(EXTI0_IRQn);
+				//EXTI_ClearITPendingBit(EXTI_LINE_0);
+				HAL_UART_Transmit(&huart2,"p\r\n",3,5);
+			    if (buttonPush == 4) buttonPush = 0;
+			    buttonPush++;
+			    status = 1;
+	//}
+}*/
 
 //---------------------------------------------------------------
 /* USER CODE END 4 */
@@ -814,8 +951,9 @@ void StartDefaultTask(void const * argument)
 			  	  default: ;
 			  	  	  break;
 			 	}
-			  HAL_NVIC_EnableIRQ(EXTI0_IRQn);
+
 		  }
+		  HAL_NVIC_EnableIRQ(EXTI0_IRQn);
 		  osDelay(1);
 		}
 	  }
