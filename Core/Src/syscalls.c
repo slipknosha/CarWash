@@ -30,6 +30,7 @@
 #include <time.h>
 #include <sys/time.h>
 #include <sys/times.h>
+#include "main.h"
 
 
 /* Variables */
@@ -45,6 +46,20 @@ char **environ = __env;
 
 
 /* Functions */
+
+int __io_putchar(int ch)
+{
+	uint8_t ch8=ch;
+	HAL_UART_Transmit(&huart2,(uint8_t *)&ch8,1,HAL_MAX_DELAY);
+	return ch;
+}
+
+int __io_getchar()
+{
+	uint8_t ch8;
+	HAL_UART_Receive(&huart2,&ch8,1,HAL_MAX_DELAY);
+	return ch8;
+}
 void initialise_monitor_handles()
 {
 }
