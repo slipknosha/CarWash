@@ -23,6 +23,7 @@
 
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
+#include "tasks.h"
 #include "init.h"
 #include "stdint.h"
 #include "string.h"
@@ -99,36 +100,18 @@ xSemaphoreHandle Mutex;
 volatile unsigned char MainButtonStatus = 0;
 volatile unsigned char TaskProtect = 0xFF;
 volatile uint16_t WashPlace = 1;
+void (*CarsWash[])(void const * argument) = {CarWash1, CarWash2, CarWash3, CarWash3};
 /* USER CODE END PV */
 
 /* Private function prototypes -----------------------------------------------*/
 void StartDefaultTask(void const * argument);
 
 /* USER CODE BEGIN PFP */
-void PrintF(uint8_t Process, char Words[][35], uint16_t WashPlace, xSemaphoreHandle* Mutex, uint32_t Delay);
-uint16_t PinDetect(GPIO_TypeDef* Port, uint16_t* PIN, uint8_t PinRange);
-
-void CarWash1(void const * argument);
-void CarWash2(void const * argument);
-void CarWash3(void const * argument);
-void CarWash4(void const * argument);
-
-//void Process(uint8_t Process, char Words[][35], unsigned char WashPlace, xSemaphoreHandle* Mutex, uint32_t Delay);
-void Foam(uint8_t Process, char Words[][35], unsigned char WashPlace, xSemaphoreHandle* Mutex, uint32_t Delay);
-void Brushing(uint8_t Process, char Words[][35], unsigned char WashPlace, xSemaphoreHandle* Mutex, uint32_t Delay);
-void Washing(uint8_t Process, char Words[][35], unsigned char WashPlace, xSemaphoreHandle* Mutex, uint32_t Delay);
-void Drying(uint8_t Process, char Words[][35], unsigned char WashPlace, xSemaphoreHandle* Mutex, uint32_t Delay);
 
 /* USER CODE END PFP */
 
 /* Private user code ---------------------------------------------------------*/
 /* USER CODE BEGIN 0 */
-void (*CarsWash[])(void const * argument) = {&CarWash1, &CarWash2, &CarWash3, &CarWash4};
-//void (*Foam)(uint8_t Process, char Words[][35], unsigned char WashPlace, xSemaphoreHandle* Mutex, uint32_t Delay);
-//void (*Brushing)(uint8_t Process, char Words[][35], unsigned char WashPlace, xSemaphoreHandle* Mutex, uint32_t Delay);
-//void (*Washing)(uint8_t Process, char Words[][35], unsigned char WashPlace, xSemaphoreHandle* Mutex, uint32_t Delay);
-//void (*Drying)(uint8_t Process, char Words[][35], unsigned char WashPlace, xSemaphoreHandle* Mutex, uint32_t Delay);
-void TaskCreate(void (*CarsWash)(void const * argument), osThreadId* Handle, char* Tsk, uint8_t Copies, uint16_t StackSize, osPriority Priority);
 
 /* USER CODE END 0 */
 
@@ -163,6 +146,7 @@ int main(void)
   SystemClock_Config();
   MX_USART2_UART_Init();
   MX_GPIO_Init();
+  Foam = Brushing = Washing = Drying = &Process;
   //Foam = Brushing = Washing = Drying = &Process;
   /* USER CODE END 2 */
 
@@ -217,148 +201,6 @@ int main(void)
 
 
 /* USER CODE BEGIN 4 */
-
-
-void PrintF(uint8_t Process, char Words[][35], uint16_t WashPlace, xSemaphoreHandle* Mutex, uint32_t Delay)
-{
-	xSemaphoreTake(*Mutex, portMAX_DELAY);
-	switch(Process)
-	{
-		case 1:;
-			printf("%s %s %s %lu %s %s %d %s", Words[Process - 1], Words[3 + WashPlace], Words[8] , Delay/1000, Words[9], Words[10], WashPlace, Words[11]);
-			break;
-		case 2:;
-			printf("%s %s %s %lu %s %s %d %s", Words[Process - 1], Words[3 + WashPlace], Words[8] , Delay/1000, Words[9], Words[10], WashPlace, Words[11]);
-			break;
-		case 3:;
-			printf("%s %s %s %lu %s %s %d %s", Words[Process - 1], Words[3 + WashPlace], Words[8] , Delay/1000, Words[9], Words[10], WashPlace, Words[11]);
-			break;
-		case 4:;
-			printf("%s %s %s %lu %s %s %d %s", Words[Process - 1], Words[3 + WashPlace], Words[8] , Delay/1000, Words[9], Words[10], WashPlace, Words[11]);
-			break;
-		default:;
-			break;
-	}
-	xSemaphoreGive(*Mutex);
-}
-
-void TaskCreate(void (*CarsWash)(void const * argument), osThreadId* Handle, char* Tsk, uint8_t Copies, uint16_t StackSize, osPriority Priority)
-{
-	osThreadDef(Tsk, CarsWash, Priority, Copies, StackSize);
-    *Handle = osThreadCreate(osThread(Tsk), NULL);
-}
-
-uint16_t PinDetect(GPIO_TypeDef* Port, uint16_t* Pin, uint8_t PinRange)
-{
-	uint16_t* PtrPin = Pin;
-	uint8_t ReturnedValue = 1;
-	while(1)
-	{
-		if(HAL_GPIO_ReadPin(Port, *PtrPin)==GPIO_PIN_SET)
-		{
-			return ReturnedValue;
-		}
-		if(PtrPin == Pin + PinRange)
-		{
-			PtrPin = Pin;
-			ReturnedValue = 1;
-	    }
-		PtrPin++;
-		ReturnedValue++;
-	}
-}
-
-void Foam(uint8_t Process, char Words[][35], unsigned char WashPlace, xSemaphoreHandle* Mutex, uint32_t Delay)
-{
-	osDelay(Delay);
-	PrintF(Process, Words, WashPlace, Mutex, Delay);
-}
-
-void Brushing(uint8_t Process, char Words[][35], unsigned char WashPlace, xSemaphoreHandle* Mutex, uint32_t Delay)
-{
-	osDelay(Delay);
-	PrintF(Process, Words, WashPlace, Mutex, Delay);
-}
-
-void Washing(uint8_t Process, char Words[][35], unsigned char WashPlace, xSemaphoreHandle* Mutex, uint32_t Delay)
-{
-	osDelay(Delay);
-	PrintF(Process, Words, WashPlace, Mutex, Delay);
-}
-
-void Drying(uint8_t Process, char Words[][35], unsigned char WashPlace, xSemaphoreHandle* Mutex, uint32_t Delay)
-{
-	osDelay(Delay);
-	PrintF(Process, Words, WashPlace, Mutex, Delay);
-}
-void EXTI0_IRQHandler(void)
-{
-  /* USER CODE BEGIN EXTI0_IRQn 0 */
-	HAL_NVIC_DisableIRQ(EXTI0_IRQn);
-	printf("Pushing\r\n");
-    MainButtonStatus = !MainButtonStatus;
-  /* USER CODE END EXTI0_IRQn 0 */
-    HAL_GPIO_EXTI_IRQHandler(GPIO_PIN_0);
-  /* USER CODE BEGIN EXTI0_IRQn 1 */
-
-  /* USER CODE END EXTI0_IRQn 1 */
-}
-
-void CarWash1(void const * argument)
-{
-	for(;;)
-	{
-		Foam(1, Words, WashPlace, &Mutex, 30000);
-		Brushing(2, Words, WashPlace, &Mutex, 30000);
-		Washing(3, Words, WashPlace, &Mutex, 60000);
-		Drying(4, Words, WashPlace, &Mutex, 30000);
-		WashPlace--;
-		TaskProtect |= 0x01;
-		osThreadTerminate(NULL);
-	}
-}
-
-void CarWash2(void const * argument)
-{
-	for(;;)
-	{
-		Foam(1, Words, WashPlace, &Mutex, 30000);
-		Brushing(2, Words, WashPlace, &Mutex, 30000);
-		Washing(3, Words, WashPlace, &Mutex, 60000);
-		Drying(4, Words, WashPlace, &Mutex, 30000);
-		TaskProtect |= 0x02;
-		WashPlace--;
-		osThreadTerminate(NULL);
-	}
-}
-
-void CarWash3(void const * argument)
-{
-	for(;;)
-	{
-		Foam(1, Words, WashPlace, &Mutex, 30000);
-		Brushing(2, Words, WashPlace, &Mutex, 30000);
-		Washing(3, Words, WashPlace, &Mutex, 60000);
-		Drying(4, Words, WashPlace, &Mutex, 30000);
-		WashPlace--;
-		TaskProtect |= 0x04;
-		osThreadTerminate(NULL);
-	}
-}
-
-void CarWash4(void const * argument)
-{
-	for(;;)
-	{
-		Foam(1, Words, WashPlace, &Mutex, 30000);
-		Brushing(2, Words, WashPlace, &Mutex, 30000);
-		Washing(3, Words, WashPlace, &Mutex, 60000);
-		Drying(4, Words, WashPlace, &Mutex, 30000);
-		WashPlace--;
-		TaskProtect |= 0x08;
-		osThreadTerminate(NULL);
-	}
-}
 
 /* USER CODE END 4 */
 

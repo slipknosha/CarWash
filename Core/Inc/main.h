@@ -32,8 +32,21 @@ extern "C" {
 
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
+#include "cmsis_os.h"
+#include "tasks.h"
 #include "init.h"
+#include "stdint.h"
+#include "string.h"
+#include "stdio.h"
+#include "stdlib.h"
+#include "inttypes.h"
 /* USER CODE END Includes */
+
+/* USER CODE BEGIN PV */
+
+
+/* USER CODE END PV */
+
 
 /* Exported types ------------------------------------------------------------*/
 /* USER CODE BEGIN ET */

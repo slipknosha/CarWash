@@ -59,7 +59,7 @@
 extern TIM_HandleTypeDef htim1;
 
 /* USER CODE BEGIN EV */
-
+extern volatile unsigned char MainButtonStatus;
 /* USER CODE END EV */
 
 /******************************************************************************/
@@ -161,16 +161,18 @@ void DebugMon_Handler(void)
 /**
   * @brief This function handles EXTI line0 interrupt.
   */
-//void EXTI0_IRQHandler(void)
-//{
+void EXTI0_IRQHandler(void)
+{
   /* USER CODE BEGIN EXTI0_IRQn 0 */
-
+	HAL_NVIC_DisableIRQ(EXTI0_IRQn);
+	printf("Pushing\r\n");
+    MainButtonStatus = !MainButtonStatus;
   /* USER CODE END EXTI0_IRQn 0 */
-  //HAL_GPIO_EXTI_IRQHandler(GPIO_PIN_0);
+    HAL_GPIO_EXTI_IRQHandler(GPIO_PIN_0);
   /* USER CODE BEGIN EXTI0_IRQn 1 */
 
   /* USER CODE END EXTI0_IRQn 1 */
-//}
+}
 
 /**
   * @brief This function handles TIM1 update interrupt and TIM10 global interrupt.
