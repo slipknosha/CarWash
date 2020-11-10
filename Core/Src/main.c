@@ -94,13 +94,13 @@ char TaskName[][9] = {
 		"carwash4"
 };
 
-osThreadId CarWash[4];
+osThreadId CarWash[4];//Handles for tasks
 
 xSemaphoreHandle Mutex;
-volatile unsigned char MainButtonStatus = 0;
-volatile unsigned char TaskProtect = 0xFF;
-volatile uint16_t WashPlace = 1;
-void (*CarsWash[])(void const * argument) = {CarWash1, CarWash2, CarWash3, CarWash3};
+volatile unsigned char MainButtonStatus = 0;//no comment
+volatile unsigned char TaskProtect = 0xFF;//using 1 byte to protect extra creation the same task
+volatile uint16_t WashPlace = 1;//which the place for is used right now
+void (*CarsWash[])(void const * argument) = {CarWash1, CarWash2, CarWash3, CarWash3}; //array of pointers to tasks fucntions
 /* USER CODE END PV */
 
 /* Private function prototypes -----------------------------------------------*/
@@ -146,13 +146,12 @@ int main(void)
   SystemClock_Config();
   MX_USART2_UART_Init();
   MX_GPIO_Init();
-  Foam = Brushing = Washing = Drying = &Process;
-  //Foam = Brushing = Washing = Drying = &Process;
+  Foam = Brushing = Washing = Drying = &Process; /*I'm too lazy for creating 4 same fucntions.*/
   /* USER CODE END 2 */
 
   /* USER CODE BEGIN RTOS_MUTEX */
   /* add mutexes, ... */
-  Mutex = xSemaphoreCreateMutex();
+  Mutex = xSemaphoreCreateMutex(); /*mutex (=*/
   /* USER CODE END RTOS_MUTEX */
 
   /* USER CODE BEGIN RTOS_SEMAPHORES */
@@ -211,7 +210,7 @@ int main(void)
   * @retval None
   */
 /* USER CODE END Header_StartDefaultTask */
-void StartDefaultTask(void const * argument)
+void StartDefaultTask(void const * argument) /*Deafult task. This task creates new tasks for new cars*/
 {
   /* USER CODE BEGIN 5 */
 	  /* Infinite loop */
@@ -220,7 +219,7 @@ void StartDefaultTask(void const * argument)
 		  if (MainButtonStatus)
 		  {
 			  osDelay(30);
-			  switch(PinDetect(GPIOC, Pin, 3))
+			  switch(PinDetect(GPIOC, Pin, 3)) /*Fuction returns number from 1 to N - car*/
 			  {
 			  	  case 1: ;
 			  	  	  if(TaskProtect & 0x01)

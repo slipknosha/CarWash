@@ -47,6 +47,8 @@ char **environ = __env;
 
 /* Functions */
 
+/*2 fun below for retargeting printf to UART*/
+
 int __io_putchar(int ch)
 {
 	uint8_t ch8=ch;

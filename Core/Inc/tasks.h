@@ -18,6 +18,8 @@ extern xSemaphoreHandle Mutex;
 extern volatile unsigned char TaskProtect;
 extern volatile uint16_t WashPlace;
 
+/*Task's functions*/
+
 void CarWash1(void const * argument);
 void CarWash2(void const * argument);
 void CarWash3(void const * argument);
