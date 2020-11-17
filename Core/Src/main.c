@@ -30,6 +30,7 @@
 #include "stdio.h"
 #include "stdlib.h"
 #include "inttypes.h"
+#include "stdarg.h"
 /* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/
@@ -77,14 +78,6 @@ char Words[][35] = {
 		"Brushing the",
 		"Washing the",
 		"Drying the",
-		"first",
-		"second",
-		"third",
-		"fourth",
-		"car is completed it took",
-		"sec"
-		"in the"
-		"washing place\r\n",
 };
 
 char TaskName[][9] = {

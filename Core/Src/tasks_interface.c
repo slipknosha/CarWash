@@ -8,11 +8,11 @@
 
 #include "tasks_interface.h"
 
-void Process(uint8_t Process, char Words[][35], unsigned char WashPlace, uint32_t Delay)
+void Process(uint8_t Process, unsigned char WashPlace, uint32_t Delay, uint8_t FirstWord)
 {
 	osDelay(Delay);
 	xSemaphoreTake(Mutex, portMAX_DELAY);
-	PrintF(Process, Words, WashPlace, Delay);
+	PrintF("%s car it took %llu sec in the %lu wahsing place\r\n", Words[FirstWord], Delay/1000, WashPlace);
 	xSemaphoreGive(Mutex);
 }
 

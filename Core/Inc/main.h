@@ -40,6 +40,7 @@ extern "C" {
 #include "stdio.h"
 #include "stdlib.h"
 #include "inttypes.h"
+#include "stdarg.h"
 /* USER CODE END Includes */
 
 /* USER CODE BEGIN PV */
