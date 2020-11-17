@@ -96,7 +96,8 @@ char TaskName[][9] = {
 
 osThreadId CarWash[4];//Handles for tasks
 uint8_t TasksCreated = 0;
-osMessageQId TasksQueues[4];
+osMessageQId* TasksQueues[4];
+osMessageQId CarWash1Queue, CarWash2Queue, CarWash3Queue, CarWash4Queue;
 xSemaphoreHandle Mutex;
 volatile unsigned char MainButtonStatus = 0;//no comment
 volatile unsigned char TaskProtect[4] = {1, 1, 1, 1,};
@@ -166,14 +167,18 @@ int main(void)
 
   /* USER CODE BEGIN RTOS_QUEUES */
   /* add queues, ... */
-  osMessageQDef(TasksQueues[0], 1, uint16_t);
-  TasksQueues[0] = osMessageCreate(osMessageQ(TasksQueues[0]), NULL);
-  osMessageQDef(TasksQueues[1], 1, uint16_t);
-  TasksQueues[1] = osMessageCreate(osMessageQ(TasksQueues[1]), NULL);
-  osMessageQDef(TasksQueues[2], 1, uint16_t);
-  TasksQueues[2] = osMessageCreate(osMessageQ(TasksQueues[2]), NULL);
-  osMessageQDef(TasksQueues[3], 1, uint16_t);
-  TasksQueues[3] = osMessageCreate(osMessageQ(TasksQueues[3]), NULL);
+  osMessageQDef(CarWash1Queue, 1, uint16_t);
+  CarWash1Queue = osMessageCreate(osMessageQ(CarWash1Queue), NULL);
+  osMessageQDef(CarWash2Queue, 1, uint16_t);
+  CarWash2Queue = osMessageCreate(osMessageQ(CarWash2Queue), NULL);
+  osMessageQDef(CarWash3Queue, 1, uint16_t);
+  CarWash3Queue = osMessageCreate(osMessageQ(CarWash3Queue), NULL);
+  osMessageQDef(CarWash4Queue, 1, uint16_t);
+  CarWash4Queue = osMessageCreate(osMessageQ(CarWash4Queue), NULL);
+  TasksQueues[0] = &CarWash1Queue;
+  TasksQueues[1] = &CarWash2Queue;
+  TasksQueues[2] = &CarWash3Queue;
+  TasksQueues[3] = &CarWash4Queue;
   /* USER CODE END RTOS_QUEUES */
 
   /* Create the thread(s) */
@@ -243,7 +248,7 @@ void StartDefaultTask(void const * argument) /*Deafult task. This task creates n
 		      {
 		        if(GetMessageFromTask[TaskNumber].status == osEventMessage)
 		        {
-		          GetMessageFromTask[TaskNumber] = osMessageGet(TasksQueues[TaskNumber], 100);
+		          GetMessageFromTask[TaskNumber] = osMessageGet(*TasksQueues[TaskNumber], 100);
 		        }
 		      }
 
@@ -262,7 +267,7 @@ void StartDefaultTask(void const * argument) /*Deafult task. This task creates n
 			    	  osDelay(30);
 			          if(HAL_GPIO_ReadPin(GPIOC, Pin[TaskNumber])==GPIO_PIN_SET)
 			          {
-			    	    osMessagePut(TasksQueues[TaskNumber], 1, 100);
+			    	    osMessagePut(*TasksQueues[TaskNumber], 1, 100);
 			    		TaskProtect[TaskNumber] = 0;
 			    	  }
 			    	}
@@ -282,7 +287,7 @@ void StartDefaultTask(void const * argument) /*Deafult task. This task creates n
 				    {
 				      GetMessageFromTask[TaskNumber].value.v = 0;
 				      GetMessageFromTask[TaskNumber].status = osOK;
-				      osMessagePut(TasksQueues[TaskNumber], 1, 100);
+				      osMessagePut(*TasksQueues[TaskNumber], 1, 100);
 				     }
 				   }
 				 }
@@ -291,6 +296,7 @@ void StartDefaultTask(void const * argument) /*Deafult task. This task creates n
 		  HAL_NVIC_EnableIRQ(EXTI0_IRQn);
 		  osDelay(1);
 		}
+	  }
 
   /* USER CODE END 5 */
 }
