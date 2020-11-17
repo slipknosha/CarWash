@@ -8,9 +8,8 @@
 
 #include "printf.h"
 
-void PrintF(uint8_t Process, char Words[][35], uint16_t WashPlace, xSemaphoreHandle* Mutex, uint32_t Delay)
+void PrintF(uint8_t Process, char Words[][35], uint16_t WashPlace, uint32_t Delay)
 {
-	xSemaphoreTake(*Mutex, portMAX_DELAY);
 	switch(Process)
 	{
 		case 1:;
@@ -32,5 +31,4 @@ void PrintF(uint8_t Process, char Words[][35], uint16_t WashPlace, xSemaphoreHan
 		default:;
 			break;
 	}
-	xSemaphoreGive(*Mutex);
 }

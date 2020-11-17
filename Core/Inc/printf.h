@@ -10,6 +10,6 @@
 
 #include "main.h"
 
-void PrintF(uint8_t Process, char Words[][35], uint16_t WashPlace, xSemaphoreHandle* Mutex, uint32_t Delay);
+void PrintF(uint8_t Process, char Words[][35], uint16_t WashPlace, uint32_t Delay);
 
 #endif /* INC_PRINTF_H_ */

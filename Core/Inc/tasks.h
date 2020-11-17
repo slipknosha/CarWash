@@ -15,8 +15,10 @@
 
 extern char Words[][35];
 extern xSemaphoreHandle Mutex;
-extern volatile unsigned char TaskProtect;
+
 extern volatile uint16_t WashPlace;
+extern osMessageQId TasksQueues[4];
+extern xSemaphoreHandle Mutex;
 
 /*Task's functions*/
 

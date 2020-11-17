@@ -95,10 +95,11 @@ char TaskName[][9] = {
 };
 
 osThreadId CarWash[4];//Handles for tasks
-
+uint8_t TasksCreated = 0;
+osMessageQId TasksQueues[4];
 xSemaphoreHandle Mutex;
 volatile unsigned char MainButtonStatus = 0;//no comment
-volatile unsigned char TaskProtect = 0xFF;//using 1 byte to protect extra creation the same task
+volatile unsigned char TaskProtect[4] = {1, 1, 1, 1,};
 volatile uint16_t WashPlace = 1;//which the place for is used right now
 void (*CarsWash[])(void const * argument) = {CarWash1, CarWash2, CarWash3, CarWash3}; //array of pointers to tasks fucntions
 /* USER CODE END PV */
@@ -165,7 +166,14 @@ int main(void)
 
   /* USER CODE BEGIN RTOS_QUEUES */
   /* add queues, ... */
-
+  osMessageQDef(TasksQueues[0], 1, uint16_t);
+  TasksQueues[0] = osMessageCreate(osMessageQ(TasksQueues[0]), NULL);
+  osMessageQDef(TasksQueues[1], 1, uint16_t);
+  TasksQueues[1] = osMessageCreate(osMessageQ(TasksQueues[1]), NULL);
+  osMessageQDef(TasksQueues[2], 1, uint16_t);
+  TasksQueues[2] = osMessageCreate(osMessageQ(TasksQueues[2]), NULL);
+  osMessageQDef(TasksQueues[3], 1, uint16_t);
+  TasksQueues[3] = osMessageCreate(osMessageQ(TasksQueues[3]), NULL);
   /* USER CODE END RTOS_QUEUES */
 
   /* Create the thread(s) */
@@ -214,50 +222,71 @@ void StartDefaultTask(void const * argument) /*Deafult task. This task creates n
 {
   /* USER CODE BEGIN 5 */
 	  /* Infinite loop */
+	  osEvent GetMessageFromTask[4];
+	  if (!TasksCreated)
+	  {
+        for(int TaskNumber = 0; TaskNumber < 4; TaskNumber++)
+		{
+		  TaskCreate(CarsWash[TaskNumber], &CarWash[TaskNumber], TaskName[TaskNumber], 0, 1280, osPriorityNormal);
+		}
+        TasksCreated = 1;
+	  }
+
 	  for(;;)
 	  {
-		  if (MainButtonStatus)
+	    if (MainButtonStatus)
+		{
+		  osDelay(30);
+	      if(MainButtonStatus)
 		  {
-			  osDelay(30);
-			  switch(PinDetect(GPIOC, Pin, 3)) /*Fuction returns number from 1 to N - car*/
-			  {
-			  	  case 1: ;
-			  	  	  if(TaskProtect & 0x01)
-			  	  	  {
-				  	  	  TaskCreate(CarsWash[0], &CarWash[0], TaskName[0], 0, 1280, osPriorityNormal);
-				  	  	  TaskProtect &= 0xFE;
-				  	  	  WashPlace++;
-			  	  	  }
-			  	  	  break;
-			  	  case 2: ;
-			  	  	  if(TaskProtect & 0x02)
-			  	  	  {
-				  	  	  TaskCreate(CarsWash[1], &CarWash[1], TaskName[1], 0, 1280, osPriorityNormal);
-				  	  	  TaskProtect &= 0xFD;
-				  	  	  WashPlace++;
-			  	  	  }
-			  	  	  break;
-			  	  case 3: ;
-			  	  	  if(TaskProtect & 0x04)
-			  	  	  {
-				  	  	  TaskCreate(CarsWash[2], &CarWash[2], TaskName[2], 0, 1280, osPriorityNormal);
-				  	  	  TaskProtect &= 0xFB;
-				  	  	  WashPlace++;
+		      for(int TaskNumber = 0; TaskNumber < 4; TaskNumber++)
+		      {
+		        if(GetMessageFromTask[TaskNumber].status == osEventMessage)
+		        {
+		          GetMessageFromTask[TaskNumber] = osMessageGet(TasksQueues[TaskNumber], 100);
+		        }
+		      }
 
-			  	  	  }
-			  	  	  break;
-			  	  case 4: ;
-			  	  	  if(TaskProtect & 0x08)
-			  	  	  {
-			  	  		  TaskCreate(CarsWash[3], &CarWash[3], TaskName[3], 0, 1280, osPriorityNormal);
-			  	  		  TaskProtect &= 0xF7;
-			  	  		  WashPlace++;
-			  	  	  }
-			  	  	  break;
-			  	  default: ;
-			  	  	  break;
-			 	}
+		      if(TaskProtect[0] || TaskProtect[1] || TaskProtect[2] || TaskProtect[3])
+		      {
+			    for(int TaskNumber = 0; TaskNumber < 4; TaskNumber++)
+			    {
+			      if(!TaskProtect[TaskNumber])
+			      {
+			        continue;
+			      }
+			      else
+			      {
+			        if(HAL_GPIO_ReadPin(GPIOC, Pin[TaskNumber])==GPIO_PIN_SET)
+			    	{
+			    	  osDelay(30);
+			          if(HAL_GPIO_ReadPin(GPIOC, Pin[TaskNumber])==GPIO_PIN_SET)
+			          {
+			    	    osMessagePut(TasksQueues[TaskNumber], 1, 100);
+			    		TaskProtect[TaskNumber] = 0;
+			    	  }
+			    	}
+			       }
+			     }
+		      }
 
+		      for(int TaskNumber = 0; TaskNumber < 4; TaskNumber++)
+		      {
+			    if((GetMessageFromTask[TaskNumber].status == osEventMessage) &&
+			    GetMessageFromTask[TaskNumber].value.v)
+				{
+				  if(HAL_GPIO_ReadPin(GPIOC, Pin[TaskNumber])==GPIO_PIN_SET)
+				  {
+				    osDelay(30);
+				    if(HAL_GPIO_ReadPin(GPIOC, Pin[TaskNumber])==GPIO_PIN_SET)
+				    {
+				      GetMessageFromTask[TaskNumber].value.v = 0;
+				      GetMessageFromTask[TaskNumber].status = osOK;
+				      osMessagePut(TasksQueues[TaskNumber], 1, 100);
+				     }
+				   }
+				 }
+		      }
 		  }
 		  HAL_NVIC_EnableIRQ(EXTI0_IRQn);
 		  osDelay(1);

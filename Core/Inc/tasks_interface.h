@@ -10,11 +10,11 @@
 
 #include "main.h"
 
-void Process(uint8_t Process, char Words[][35], unsigned char WashPlace, xSemaphoreHandle* Mutex, uint32_t Delay); //this is base fucntions for pointers below
-void (*Foam)(uint8_t Process, char Words[][35], unsigned char WashPlace, xSemaphoreHandle* Mutex, uint32_t Delay);
-void (*Brushing)(uint8_t Process, char Words[][35], unsigned char WashPlace, xSemaphoreHandle* Mutex, uint32_t Delay);
-void (*Washing)(uint8_t Process, char Words[][35], unsigned char WashPlace, xSemaphoreHandle* Mutex, uint32_t Delay);
-void (*Drying)(uint8_t Process, char Words[][35], unsigned char WashPlace, xSemaphoreHandle* Mutex, uint32_t Delay);
+void Process(uint8_t Process, char Words[][35], unsigned char WashPlace, uint32_t Delay); //this is base fucntions for pointers below
+void (*Foam)(uint8_t Process, char Words[][35], unsigned char WashPlace, uint32_t Delay);
+void (*Brushing)(uint8_t Process, char Words[][35], unsigned char WashPlace, uint32_t Delay);
+void (*Washing)(uint8_t Process, char Words[][35], unsigned char WashPlace, uint32_t Delay);
+void (*Drying)(uint8_t Process, char Words[][35], unsigned char WashPlace, uint32_t Delay);
 void TaskCreate(void (*CarsWash)(void const * argument), osThreadId* Handle, char* Tsk, uint8_t Copies, uint16_t StackSize, osPriority Priority);//easier creating of task
 
 
