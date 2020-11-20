@@ -8,28 +8,32 @@
 
 #include "tasks_interface.h"
 
+/*Simulation of real processes of washing the car*/
+
+/*Delay is the realtime process. PrintF - output the string to UART*/
+
 void Foam(uint8_t Task)
 {
   osDelay(30000);
-  PrintF("%s car it took %llu sec in the %lu wahsing place\r\n", Words[0], 30, Task);
+  PrintF("Foam applied to the car it took 30 sec in the %lu wahsing place\r\n", Task);
 }
 
 void Brushing(uint8_t Task)
 {
   osDelay(30000);
-  PrintF("%s car it took %llu sec in the %lu wahsing place\r\n", Words[1], 30, Task);
+  PrintF("Brushing the car it took 30 sec in the %lu wahsing place\r\n", Task);
 }
 
 void Washing(uint8_t Task)
 {
   osDelay(60000);
-  PrintF("%s car it took %llu sec in the %lu wahsing place\r\n", Words[2], 60, Task);
+  PrintF("Washing the car it took 60 sec in the %lu wahsing place\r\n", Task);
 }
 
 void Drying(uint8_t Task)
 {
   osDelay(30000);
-  PrintF("%s car it took %llu sec in the %lu wahsing place\r\n", Words[3], 30, Task);
+  PrintF("Drying the car it took 30 sec in the %lu wahsing place\r\n", Task);
 }
 
 

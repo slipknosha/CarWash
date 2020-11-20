@@ -51,18 +51,11 @@
 /* Private variables ---------------------------------------------------------*/
 
 
-osThreadId defaultTaskHandle;
+osThreadId defaultTaskHandle; //main task handle
 /* USER CODE BEGIN PV */
 
-char Words[][35] = {
-		"Foam applied to the",
-		"Brushing the",
-		"Washing the",
-		"Drying the",
-}; //static array for changing first words to display this via UART
-
-osThreadId CarWash1Handle, CarWash2Handle, CarWash3Handle, CarWash4Handle;
-osMessageQId CarWash1Queue, CarWash2Queue, CarWash3Queue, CarWash4Queue;
+osThreadId CarWash1Handle, CarWash2Handle, CarWash3Handle, CarWash4Handle; //handles for creating tasks
+osMessageQId CarWash1Queue, CarWash2Queue, CarWash3Queue, CarWash4Queue; //handles for creating queues
 xSemaphoreHandle Mutex;
 volatile unsigned char MainButtonStatus = 0; //Changing from ISR
 volatile unsigned char Protect[4] = {1, 1, 1, 1,}; //Protect flags that program cant send message to car wasning tasks again while this tasks is running
@@ -201,6 +194,9 @@ void StartDefaultTask(void const * argument) /*Deafult task. This task creates n
   CarWash4Handle = osThreadCreate(osThread(carwash4), NULL);
 
 
+  /*This algorithm check the main button, then if last one is NOT ZERO check the protect flags and pin status(washing place)*/
+  /*Then it send just 1 byte(logical 1) to tasks and "lock the door" to the checking one of 4 tasks pin*/
+
 
   for(;;)
   {
@@ -209,27 +205,27 @@ void StartDefaultTask(void const * argument) /*Deafult task. This task creates n
 	  osDelay(30);
 	  if(MainButtonStatus)
 	  {
-	    if(Protect[THE_FIRST_TASK] || (HAL_GPIO_ReadPin(GPIOC, FIRST_WASHING_PLACE) == GPIO_PIN_SET))
+	    if(Protect[THE_FIRST_TASK] && (HAL_GPIO_ReadPin(GPIOC, FIRST_WASHING_PLACE) == GPIO_PIN_SET))
 	    {
-	      osMessagePut(CarWash1Queue, 1, 100);
+	      osMessagePut(CarWash1Queue, 1, portMAX_DELAY);
 	      Protect[THE_FIRST_TASK] = TASK_PROTECTED;
 	    }
 
-	    if(Protect[THE_SECOND_TASK] || (HAL_GPIO_ReadPin(GPIOC, SECOND_WASHING_PLACE) == GPIO_PIN_SET))
+	    if(Protect[THE_SECOND_TASK] && (HAL_GPIO_ReadPin(GPIOC, SECOND_WASHING_PLACE) == GPIO_PIN_SET))
 	    {
-	      osMessagePut(CarWash1Queue, 1, 100);
+	      osMessagePut(CarWash1Queue, 1, portMAX_DELAY);
 	      Protect[THE_SECOND_TASK] = TASK_PROTECTED;
 	    }
 
-	    if(Protect[THE_THIRD_TASK] || (HAL_GPIO_ReadPin(GPIOC, THIRD_WASHING_PLACE) == GPIO_PIN_SET))
+	    if(Protect[THE_THIRD_TASK] && (HAL_GPIO_ReadPin(GPIOC, THIRD_WASHING_PLACE) == GPIO_PIN_SET))
 	    {
-	      osMessagePut(CarWash1Queue, 1, 100);
+	      osMessagePut(CarWash1Queue, 1, portMAX_DELAY);
 	      Protect[THE_THIRD_TASK] = TASK_PROTECTED;
 	    }
 
-	    if(Protect[THE_FOURTH_TASK] || (HAL_GPIO_ReadPin(GPIOC, FOURTH_WASHIN_PLACE) == GPIO_PIN_SET))
+	    if(Protect[THE_FOURTH_TASK] && (HAL_GPIO_ReadPin(GPIOC, FOURTH_WASHIN_PLACE) == GPIO_PIN_SET))
 	    {
-	      osMessagePut(CarWash1Queue, 1, 100);
+	      osMessagePut(CarWash1Queue, 1, portMAX_DELAY);
 	      Protect[THE_FOURTH_TASK] = TASK_PROTECTED;
 	    }
 	  }

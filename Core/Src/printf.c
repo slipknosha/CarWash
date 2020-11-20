@@ -8,6 +8,8 @@
 
 #include "printf.h"
 
+/*function aka x86 printf(...), but output the string to UART*/
+
 void PrintF(char* format, ...)
 {
   xSemaphoreTake(Mutex, portMAX_DELAY);
