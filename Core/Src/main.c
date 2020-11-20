@@ -54,48 +54,18 @@
 osThreadId defaultTaskHandle;
 /* USER CODE BEGIN PV */
 
-uint16_t Pin[] = {
-		GPIO_PIN_0,
-		GPIO_PIN_1,
-		GPIO_PIN_2,
-		GPIO_PIN_3,
-		GPIO_PIN_4,
-		GPIO_PIN_5,
-		GPIO_PIN_6,
-		GPIO_PIN_7,
-		GPIO_PIN_8,
-		GPIO_PIN_9,
-		GPIO_PIN_10,
-		GPIO_PIN_11,
-		GPIO_PIN_12,
-		GPIO_PIN_13,
-		GPIO_PIN_14,
-		GPIO_PIN_15,
-};
-
 char Words[][35] = {
 		"Foam applied to the",
 		"Brushing the",
 		"Washing the",
 		"Drying the",
-};
+}; //static array for changing first words to display this via UART
 
-char TaskName[][9] = {
-		"carwash1",
-		"carwash2",
-		"carwash3",
-		"carwash4"
-};
-
-osThreadId CarWash[4];//Handles for tasks
-uint8_t TasksCreated = 0;
-osMessageQId* TasksQueues[4];
+osThreadId CarWash1Handle, CarWash2Handle, CarWash3Handle, CarWash4Handle;
 osMessageQId CarWash1Queue, CarWash2Queue, CarWash3Queue, CarWash4Queue;
 xSemaphoreHandle Mutex;
-volatile unsigned char MainButtonStatus = 0;//no comment
-volatile unsigned char TaskProtect[4] = {1, 1, 1, 1,};
-volatile uint16_t WashPlace = 1;//which the place for is used right now
-void (*CarsWash[])(void const * argument) = {CarWash1, CarWash2, CarWash3, CarWash3}; //array of pointers to tasks fucntions
+volatile unsigned char MainButtonStatus = 0; //Changing from ISR
+volatile unsigned char Protect[4] = {1, 1, 1, 1,}; //Protect flags that program cant send message to car wasning tasks again while this tasks is running
 /* USER CODE END PV */
 
 /* Private function prototypes -----------------------------------------------*/
@@ -141,12 +111,11 @@ int main(void)
   SystemClock_Config();
   MX_USART2_UART_Init();
   MX_GPIO_Init();
-  Foam = Brushing = Washing = Drying = &Process; /*I'm too lazy for creating 4 same fucntions.*/
   /* USER CODE END 2 */
 
   /* USER CODE BEGIN RTOS_MUTEX */
   /* add mutexes, ... */
-  Mutex = xSemaphoreCreateMutex(); /*mutex (=*/
+  Mutex = xSemaphoreCreateMutex(); /*mutex - using for protect critical part of code. In this program it is UART transmit (=*/
   /* USER CODE END RTOS_MUTEX */
 
   /* USER CODE BEGIN RTOS_SEMAPHORES */
@@ -162,16 +131,15 @@ int main(void)
   /* add queues, ... */
   osMessageQDef(CarWash1Queue, 1, uint16_t);
   CarWash1Queue = osMessageCreate(osMessageQ(CarWash1Queue), NULL);
+
   osMessageQDef(CarWash2Queue, 1, uint16_t);
   CarWash2Queue = osMessageCreate(osMessageQ(CarWash2Queue), NULL);
+
   osMessageQDef(CarWash3Queue, 1, uint16_t);
   CarWash3Queue = osMessageCreate(osMessageQ(CarWash3Queue), NULL);
+
   osMessageQDef(CarWash4Queue, 1, uint16_t);
   CarWash4Queue = osMessageCreate(osMessageQ(CarWash4Queue), NULL);
-  TasksQueues[0] = &CarWash1Queue;
-  TasksQueues[1] = &CarWash2Queue;
-  TasksQueues[2] = &CarWash3Queue;
-  TasksQueues[3] = &CarWash4Queue;
   /* USER CODE END RTOS_QUEUES */
 
   /* Create the thread(s) */
@@ -219,80 +187,58 @@ int main(void)
 void StartDefaultTask(void const * argument) /*Deafult task. This task creates new tasks for new cars*/
 {
   /* USER CODE BEGIN 5 */
-	  /* Infinite loop */
-	  osEvent GetMessageFromTask[4];
-	  if (!TasksCreated)
+  /*Creating 4 washings tasks*/
+  osThreadDef(carwash1, CarWash1, osPriorityNormal, 0, 1280);
+  CarWash1Handle = osThreadCreate(osThread(carwash1), NULL);
+
+  osThreadDef(carwash2, CarWash2, osPriorityNormal, 0, 1280);
+  CarWash2Handle = osThreadCreate(osThread(carwash2), NULL);
+
+  osThreadDef(carwash3, CarWash3, osPriorityNormal, 0, 1280);
+  CarWash3Handle = osThreadCreate(osThread(carwash3), NULL);
+
+  osThreadDef(carwash4, CarWash4, osPriorityNormal, 0, 1280);
+  CarWash4Handle = osThreadCreate(osThread(carwash4), NULL);
+
+
+
+  for(;;)
+  {
+    if(MainButtonStatus)
+	{
+	  osDelay(30);
+	  if(MainButtonStatus)
 	  {
-        for(int TaskNumber = 0; TaskNumber < 4; TaskNumber++)
-		{
-		  TaskCreate(CarsWash[TaskNumber], &CarWash[TaskNumber], TaskName[TaskNumber], 0, 1280, osPriorityNormal);
-		}
-        TasksCreated = 1;
+	    if(Protect[THE_FIRST_TASK] || (HAL_GPIO_ReadPin(GPIOC, FIRST_WASHING_PLACE) == GPIO_PIN_SET))
+	    {
+	      osMessagePut(CarWash1Queue, 1, 100);
+	      Protect[THE_FIRST_TASK] = TASK_PROTECTED;
+	    }
+
+	    if(Protect[THE_SECOND_TASK] || (HAL_GPIO_ReadPin(GPIOC, SECOND_WASHING_PLACE) == GPIO_PIN_SET))
+	    {
+	      osMessagePut(CarWash1Queue, 1, 100);
+	      Protect[THE_SECOND_TASK] = TASK_PROTECTED;
+	    }
+
+	    if(Protect[THE_THIRD_TASK] || (HAL_GPIO_ReadPin(GPIOC, THIRD_WASHING_PLACE) == GPIO_PIN_SET))
+	    {
+	      osMessagePut(CarWash1Queue, 1, 100);
+	      Protect[THE_THIRD_TASK] = TASK_PROTECTED;
+	    }
+
+	    if(Protect[THE_FOURTH_TASK] || (HAL_GPIO_ReadPin(GPIOC, FOURTH_WASHIN_PLACE) == GPIO_PIN_SET))
+	    {
+	      osMessagePut(CarWash1Queue, 1, 100);
+	      Protect[THE_FOURTH_TASK] = TASK_PROTECTED;
+	    }
 	  }
-
-	  for(;;)
-	  {
-	    if (MainButtonStatus)
-		{
-		  osDelay(30);
-	      if(MainButtonStatus)
-		  {
-		      for(int TaskNumber = 0; TaskNumber < 4; TaskNumber++)
-		      {
-		        if(GetMessageFromTask[TaskNumber].status == osEventMessage)
-		        {
-		          GetMessageFromTask[TaskNumber] = osMessageGet(*TasksQueues[TaskNumber], 100);
-		        }
-		      }
-
-		      if(TaskProtect[0] || TaskProtect[1] || TaskProtect[2] || TaskProtect[3])
-		      {
-			    for(int TaskNumber = 0; TaskNumber < 4; TaskNumber++)
-			    {
-			      if(!TaskProtect[TaskNumber])
-			      {
-			        continue;
-			      }
-			      else
-			      {
-			        if(HAL_GPIO_ReadPin(GPIOC, Pin[TaskNumber])==GPIO_PIN_SET)
-			    	{
-			    	  osDelay(30);
-			          if(HAL_GPIO_ReadPin(GPIOC, Pin[TaskNumber])==GPIO_PIN_SET)
-			          {
-			    	    osMessagePut(*TasksQueues[TaskNumber], 1, 100);
-			    		TaskProtect[TaskNumber] = 0;
-			    	  }
-			    	}
-			       }
-			     }
-		      }
-
-		      for(int TaskNumber = 0; TaskNumber < 4; TaskNumber++)
-		      {
-			    if((GetMessageFromTask[TaskNumber].status == osEventMessage) &&
-			    GetMessageFromTask[TaskNumber].value.v)
-				{
-				  if(HAL_GPIO_ReadPin(GPIOC, Pin[TaskNumber])==GPIO_PIN_SET)
-				  {
-				    osDelay(30);
-				    if(HAL_GPIO_ReadPin(GPIOC, Pin[TaskNumber])==GPIO_PIN_SET)
-				    {
-				      GetMessageFromTask[TaskNumber].value.v = 0;
-				      GetMessageFromTask[TaskNumber].status = osOK;
-				      osMessagePut(*TasksQueues[TaskNumber], 1, 100);
-				     }
-				   }
-				 }
-		      }
-		  }
-		  HAL_NVIC_EnableIRQ(EXTI0_IRQn);
-		  osDelay(1);
-		}
-	  }
-
-  /* USER CODE END 5 */
+	}
+    HAL_NVIC_EnableIRQ(EXTI0_IRQn);
+    osDelay(1);
+  }
 }
+  /* USER CODE END 5 */
 
 /**
   * @brief  Period elapsed callback in non blocking mode

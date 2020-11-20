@@ -8,16 +8,29 @@
 
 #include "tasks_interface.h"
 
-void Process(uint8_t Process, unsigned char WashPlace, uint32_t Delay, uint8_t FirstWord)
+void Foam(uint8_t Task)
 {
-	osDelay(Delay);
-	xSemaphoreTake(Mutex, portMAX_DELAY);
-	PrintF("%s car it took %llu sec in the %lu wahsing place\r\n", Words[FirstWord], Delay/1000, WashPlace);
-	xSemaphoreGive(Mutex);
+  osDelay(30000);
+  PrintF("%s car it took %llu sec in the %lu wahsing place\r\n", Words[0], 30, Task);
 }
 
-void TaskCreate(void (*CarsWash)(void const * argument), osThreadId* Handle, char* Tsk, uint8_t Copies, uint16_t StackSize, osPriority Priority)
+void Brushing(uint8_t Task)
 {
-	osThreadDef(Tsk, CarsWash, Priority, Copies, StackSize);
-    *Handle = osThreadCreate(osThread(Tsk), NULL);
+  osDelay(30000);
+  PrintF("%s car it took %llu sec in the %lu wahsing place\r\n", Words[1], 30, Task);
 }
+
+void Washing(uint8_t Task)
+{
+  osDelay(60000);
+  PrintF("%s car it took %llu sec in the %lu wahsing place\r\n", Words[2], 60, Task);
+}
+
+void Drying(uint8_t Task)
+{
+  osDelay(30000);
+  PrintF("%s car it took %llu sec in the %lu wahsing place\r\n", Words[3], 30, Task);
+}
+
+
+

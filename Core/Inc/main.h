@@ -80,6 +80,19 @@ void Error_Handler(void);
 #define SWCLK_GPIO_Port GPIOA
 /* USER CODE BEGIN Private defines */
 
+/*Pins using as washing places*/
+#define FIRST_WASHING_PLACE GPIO_PIN_0
+#define SECOND_WASHING_PLACE GPIO_PIN_1
+#define THIRD_WASHING_PLACE GPIO_PIN_2
+#define FOURTH_WASHIN_PLACE GPIO_PIN_3
+
+#define THE_FIRST_TASK 0
+#define THE_SECOND_TASK 1
+#define THE_THIRD_TASK 2
+#define THE_FOURTH_TASK 3
+
+#define TASK_PROTECTED 0
+#define TASK_UNPROTECTED 1
 /* USER CODE END Private defines */
 
 #ifdef __cplusplus

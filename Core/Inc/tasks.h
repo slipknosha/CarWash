@@ -11,14 +11,20 @@
 #include "main.h"
 #include "tasks_interface.h"
 #include "printf.h"
-#include "pindetect.h"
+
+#define FROM_FIRST_CAR_WASH_TASK_CALLED (uint8_t)1
+#define FROM_SECOND_CAR_WASH_TASK_CALLED (uint8_t)2
+#define FROM_THIRD_CAR_WASH_TASK_CALLED (uint8_t)3
+#define FROM_FOUTRH_CAR_WASH_TASK_CALLED (uint8_t)4
 
 extern char Words[][35];
 extern xSemaphoreHandle Mutex;
+extern volatile unsigned char Protect[4];
 
-extern volatile uint16_t WashPlace;
-extern osMessageQId* TasksQueues[4];
-extern xSemaphoreHandle Mutex;
+extern osMessageQId CarWash1Queue;
+extern osMessageQId CarWash2Queue;
+extern osMessageQId CarWash3Queue;
+extern osMessageQId CarWash4Queue;
 
 /*Task's functions*/
 

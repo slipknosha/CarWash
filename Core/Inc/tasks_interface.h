@@ -10,12 +10,9 @@
 
 #include "main.h"
 
-void Process(uint8_t Process, unsigned char WashPlace, uint32_t Delay, uint8_t FirstWord); //this is base fucntions for pointers below
-void (*Foam)(uint8_t Process, unsigned char WashPlace, uint32_t Delay, uint8_t FirstWord);
-void (*Brushing)(uint8_t Process, unsigned char WashPlace, uint32_t Delay, uint8_t FirstWord);
-void (*Washing)(uint8_t Process, unsigned char WashPlace, uint32_t Delay, uint8_t FirstWord);
-void (*Drying)(uint8_t Process, unsigned char WashPlace, uint32_t Delay, uint8_t FirstWord);
-void TaskCreate(void (*CarsWash)(void const * argument), osThreadId* Handle, char* Tsk, uint8_t Copies, uint16_t StackSize, osPriority Priority);//easier creating of task
-
+void Foam(uint8_t Task);
+void Brushing(uint8_t Task);
+void Washing(uint8_t Task);
+void Drying(uint8_t Task);
 
 #endif /* INC_TASKS_INTERFACE_H_ */

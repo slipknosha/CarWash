@@ -10,11 +10,12 @@
 
 void PrintF(char* format, ...)
 {
-	char bufer[BUFER_SIZE];
-	va_list args;
-	va_start(args, format);
-	vsnprintf(bufer, BUFER_SIZE, format, args);
-	printf((char*)bufer);
-	va_end(args);
+  xSemaphoreTake(Mutex, portMAX_DELAY);
+  char bufer[BUFER_SIZE];
+  va_list args;
+  va_start(args, format);
+  vsnprintf(bufer, BUFER_SIZE, format, args);
+  printf((char*)bufer);
+  va_end(args);
+  xSemaphoreGive(Mutex);
 }
-
