@@ -65,7 +65,7 @@ volatile unsigned char Protect[4] = {1, 1, 1, 1,}; //Protect flags that program 
 void StartDefaultTask(void const * argument);
 
 /* USER CODE BEGIN PFP */
-
+void SendMessageToWashingTask(uint8_t Task, uint8_t WashingPlace, osMessageQId* CarWashQueue);
 /* USER CODE END PFP */
 
 /* Private user code ---------------------------------------------------------*/
@@ -167,7 +167,14 @@ int main(void)
 
 
 /* USER CODE BEGIN 4 */
-
+void SendMessageToWashingTask(uint8_t Task, uint8_t WashingPlace, osMessageQId* CarWashQueue)
+{
+  if(Protect[Task] && (HAL_GPIO_ReadPin(GPIOC, WashingPlace) == GPIO_PIN_SET))
+  {
+    osMessagePut(*CarWashQueue, 1, portMAX_DELAY);
+    Protect[Task] = TASK_PROTECTED;
+  }
+}
 /* USER CODE END 4 */
 
 /* USER CODE BEGIN Header_StartDefaultTask */
@@ -202,34 +209,15 @@ void StartDefaultTask(void const * argument) /*Deafult task. This task creates n
   {
     if(MainButtonStatus)
 	{
-	  osDelay(30);
+      osDelay(30);
 	  if(MainButtonStatus)
 	  {
-	    if(Protect[THE_FIRST_TASK] && (HAL_GPIO_ReadPin(GPIOC, FIRST_WASHING_PLACE) == GPIO_PIN_SET))
-	    {
-	      osMessagePut(CarWash1Queue, 1, portMAX_DELAY);
-	      Protect[THE_FIRST_TASK] = TASK_PROTECTED;
-	    }
-
-	    if(Protect[THE_SECOND_TASK] && (HAL_GPIO_ReadPin(GPIOC, SECOND_WASHING_PLACE) == GPIO_PIN_SET))
-	    {
-	      osMessagePut(CarWash1Queue, 1, portMAX_DELAY);
-	      Protect[THE_SECOND_TASK] = TASK_PROTECTED;
-	    }
-
-	    if(Protect[THE_THIRD_TASK] && (HAL_GPIO_ReadPin(GPIOC, THIRD_WASHING_PLACE) == GPIO_PIN_SET))
-	    {
-	      osMessagePut(CarWash1Queue, 1, portMAX_DELAY);
-	      Protect[THE_THIRD_TASK] = TASK_PROTECTED;
-	    }
-
-	    if(Protect[THE_FOURTH_TASK] && (HAL_GPIO_ReadPin(GPIOC, FOURTH_WASHIN_PLACE) == GPIO_PIN_SET))
-	    {
-	      osMessagePut(CarWash1Queue, 1, portMAX_DELAY);
-	      Protect[THE_FOURTH_TASK] = TASK_PROTECTED;
-	    }
-	  }
-	}
+        SendMessageToWashingTask(THE_FIRST_TASK, FIRST_WASHING_PLACE, &CarWash1Queue);
+        SendMessageToWashingTask(THE_SECOND_TASK, SECOND_WASHING_PLACE, &CarWash2Queue);
+        SendMessageToWashingTask(THE_THIRD_TASK, THIRD_WASHING_PLACE, &CarWash3Queue);
+        SendMessageToWashingTask(THE_FOURTH_TASK, FOURTH_WASHIN_PLACE, &CarWash4Queue);
+      }
+    }
     HAL_NVIC_EnableIRQ(EXTI0_IRQn);
     osDelay(1);
   }
