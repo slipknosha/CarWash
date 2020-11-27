@@ -81,6 +81,7 @@ void Error_Handler(void);
 /* USER CODE BEGIN Private defines */
 
 /*Pins using as washing places*/
+#define MAIN_BUTTON_PIN GPIO_PIN_0
 #define FIRST_WASHING_PLACE GPIO_PIN_0
 #define SECOND_WASHING_PLACE GPIO_PIN_1
 #define THIRD_WASHING_PLACE GPIO_PIN_2
