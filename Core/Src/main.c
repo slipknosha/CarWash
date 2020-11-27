@@ -57,8 +57,9 @@ osThreadId defaultTaskHandle; //main task handle
 osThreadId CarWash1Handle, CarWash2Handle, CarWash3Handle, CarWash4Handle; //handles for creating tasks
 osMessageQId CarWash1Queue, CarWash2Queue, CarWash3Queue, CarWash4Queue; //handles for creating queues
 xSemaphoreHandle Mutex;
-volatile unsigned char MainButtonStatus = 0; //Changing from ISR
+xSemaphoreHandle SemaphoreFromISR; //Changing from ISR (MainButtonStatus)
 volatile unsigned char Protect[4] = {1, 1, 1, 1,}; //Protect flags that program cant send message to car wasning tasks again while this tasks is running
+volatile uint8_t AccesToDefaultTask = 0;
 /* USER CODE END PV */
 
 /* Private function prototypes -----------------------------------------------*/
@@ -109,6 +110,7 @@ int main(void)
   /* USER CODE BEGIN RTOS_MUTEX */
   /* add mutexes, ... */
   Mutex = xSemaphoreCreateMutex(); /*mutex - using for protect critical part of code. In this program it is UART transmit (=*/
+  SemaphoreFromISR = xSemaphoreCreateBinary();
   /* USER CODE END RTOS_MUTEX */
 
   /* USER CODE BEGIN RTOS_SEMAPHORES */
@@ -207,10 +209,14 @@ void StartDefaultTask(void const * argument) /*Deafult task. This task creates n
 
   for(;;)
   {
-    if(MainButtonStatus)
+    if(xSemaphoreTake(SemaphoreFromISR, portMAX_DELAY))
+    {
+      AccesToDefaultTask != AccesToDefaultTask;
+    }
+    if(AccesToDefaultTask)
 	{
       osDelay(30);
-	  if(MainButtonStatus)
+      if(AccesToDefaultTask)
 	  {
         SendMessageToWashingTask(THE_FIRST_TASK, FIRST_WASHING_PLACE, &CarWash1Queue);
         SendMessageToWashingTask(THE_SECOND_TASK, SECOND_WASHING_PLACE, &CarWash2Queue);

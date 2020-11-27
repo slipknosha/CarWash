@@ -57,9 +57,10 @@
 
 /* External variables --------------------------------------------------------*/
 extern TIM_HandleTypeDef htim1;
+extern xSemaphoreHandle SemaphoreFromISR;
 
 /* USER CODE BEGIN EV */
-extern volatile unsigned char MainButtonStatus;
+
 /* USER CODE END EV */
 
 /******************************************************************************/
@@ -165,8 +166,11 @@ void EXTI0_IRQHandler(void)
 {
   /* USER CODE BEGIN EXTI0_IRQn 0 */
 	HAL_NVIC_DisableIRQ(EXTI0_IRQn);
+	static BaseType_t xHigherPriorityTaskWoken;
+    xHigherPriorityTaskWoken = pdFALSE;
 	printf("Pushing\r\n");//just print something to debug
-    MainButtonStatus = !MainButtonStatus; //on/off
+	xSemaphoreGiveFromISR(SemaphoreFromISR, &xHigherPriorityTaskWoken);
+	portEND_SWITCHING_ISR(xHigherPriorityTaskWoken);
   /* USER CODE END EXTI0_IRQn 0 */
     HAL_GPIO_EXTI_IRQHandler(GPIO_PIN_0);
   /* USER CODE BEGIN EXTI0_IRQn 1 */
