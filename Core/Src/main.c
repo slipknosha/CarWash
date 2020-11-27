@@ -209,15 +209,11 @@ void StartDefaultTask(void const * argument) /*Deafult task. This task creates n
 
   for(;;)
   {
-    if(xSemaphoreTake(SemaphoreFromISR, portMAX_DELAY))
+    if(xSemaphoreTake(SemaphoreFromISR, portMAX_DELAY) == pdTRUE)
     {
-      AccesToDefaultTask != AccesToDefaultTask;
-    }
-    if(AccesToDefaultTask)
-	{
       osDelay(30);
-      if(AccesToDefaultTask)
-	  {
+      if(HAL_GPIO_ReadPin(GPIOA, MAIN_BUTTON_PIN) == GPIO_PIN_SET)
+      {
         SendMessageToWashingTask(THE_FIRST_TASK, FIRST_WASHING_PLACE, &CarWash1Queue);
         SendMessageToWashingTask(THE_SECOND_TASK, SECOND_WASHING_PLACE, &CarWash2Queue);
         SendMessageToWashingTask(THE_THIRD_TASK, THIRD_WASHING_PLACE, &CarWash3Queue);
